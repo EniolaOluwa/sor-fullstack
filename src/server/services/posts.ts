@@ -16,6 +16,21 @@ export async function listPosts(
   cacheLife("hours");
   cacheTag("posts", postsTag(eventId));
 
+  return queryPosts(eventId, options);
+}
+
+/** Uncached counterpart for admin screens — see `listProgramItemsFresh`. */
+export async function listPostsFresh(
+  eventId: string,
+  options: { includeHidden?: boolean } = {},
+): Promise<SocialPost[]> {
+  return queryPosts(eventId, options);
+}
+
+async function queryPosts(
+  eventId: string,
+  options: { includeHidden?: boolean } = {},
+): Promise<SocialPost[]> {
   const { includeHidden = false } = options;
 
   return db
@@ -30,6 +45,16 @@ export async function listPosts(
           ),
     )
     .orderBy(asc(socialPosts.position), asc(socialPosts.createdAt));
+}
+
+export async function getPostByIdFresh(eventId: string, id: string) {
+  const [post] = await db
+    .select()
+    .from(socialPosts)
+    .where(and(eq(socialPosts.id, id), eq(socialPosts.eventId, eventId)))
+    .limit(1);
+
+  return post ?? null;
 }
 
 export async function createPost(values: NewSocialPost) {

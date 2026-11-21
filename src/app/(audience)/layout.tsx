@@ -32,6 +32,9 @@ export default async function AudienceLayout({
           <Link href="/songs" className={styles.navLink}>
             Songs
           </Link>
+          <Link href="/posts" className={styles.navLink}>
+            Posts
+          </Link>
         </nav>
       </header>
       <main className={styles.main}>{children}</main>

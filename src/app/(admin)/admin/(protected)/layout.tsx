@@ -48,6 +48,9 @@ export default async function AdminLayout({
           <Link href="/admin/songs" className={styles.navLink}>
             Songs
           </Link>
+          <Link href="/admin/posts" className={styles.navLink}>
+            Posts
+          </Link>
           <a
             href="/display"
             target="_blank"
