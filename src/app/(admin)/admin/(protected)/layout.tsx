@@ -42,6 +42,9 @@ export default async function AdminLayout({
           <Link href="/admin" className={styles.navLink}>
             Dashboard
           </Link>
+          <Link href="/admin/program" className={styles.navLink}>
+            Order of service
+          </Link>
         </nav>
 
         <div className={styles.footer}>

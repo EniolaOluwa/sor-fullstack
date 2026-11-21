@@ -1,6 +1,6 @@
 import "server-only";
 import { cacheLife, cacheTag, revalidateTag } from "next/cache";
-import { and, asc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gt, lt, sql } from "drizzle-orm";
 import { db } from "../db/client";
 import {
   programItems,
@@ -20,6 +20,25 @@ export async function listProgramItems(
   cacheLife("hours");
   cacheTag("program", programTag(eventId));
 
+  return queryProgramItems(eventId, options);
+}
+
+/**
+ * Uncached read for admin screens: admin routes render at request time and
+ * must show the admin's own writes immediately (no stale-while-revalidate
+ * window). Public pages keep the cached variant above.
+ */
+export async function listProgramItemsFresh(
+  eventId: string,
+  options: { includeHidden?: boolean } = {},
+): Promise<ProgramItem[]> {
+  return queryProgramItems(eventId, options);
+}
+
+async function queryProgramItems(
+  eventId: string,
+  options: { includeHidden?: boolean } = {},
+): Promise<ProgramItem[]> {
   const { includeHidden = false } = options;
 
   return db
@@ -34,6 +53,38 @@ export async function listProgramItems(
           ),
     )
     .orderBy(asc(programItems.position), asc(programItems.createdAt));
+}
+
+export async function getProgramItem(
+  eventId: string,
+  id: string,
+): Promise<ProgramItem | null> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("program", programTag(eventId));
+
+  return queryProgramItem(eventId, id);
+}
+
+/** Uncached counterpart for admin screens — see `listProgramItemsFresh`. */
+export async function getProgramItemFresh(
+  eventId: string,
+  id: string,
+): Promise<ProgramItem | null> {
+  return queryProgramItem(eventId, id);
+}
+
+async function queryProgramItem(
+  eventId: string,
+  id: string,
+): Promise<ProgramItem | null> {
+  const [item] = await db
+    .select()
+    .from(programItems)
+    .where(and(eq(programItems.id, id), eq(programItems.eventId, eventId)))
+    .limit(1);
+
+  return item ?? null;
 }
 
 export async function createProgramItem(values: NewProgramItem) {
@@ -82,6 +133,52 @@ export async function reorderProgramItems(
         .set({ position, updatedAt: new Date() })
         .where(and(eq(programItems.id, id), eq(programItems.eventId, eventId)));
     }
+  });
+
+  revalidateTag(programTag(eventId), "max");
+}
+
+/** Swaps an item with its nearest neighbour in the given direction. */
+export async function moveProgramItem(
+  eventId: string,
+  id: string,
+  direction: "up" | "down",
+) {
+  await db.transaction(async (tx) => {
+    const [current] = await tx
+      .select()
+      .from(programItems)
+      .where(and(eq(programItems.id, id), eq(programItems.eventId, eventId)))
+      .limit(1);
+    if (!current) return;
+
+    const [neighbor] = await tx
+      .select()
+      .from(programItems)
+      .where(
+        and(
+          eq(programItems.eventId, eventId),
+          direction === "up"
+            ? lt(programItems.position, current.position)
+            : gt(programItems.position, current.position),
+        ),
+      )
+      .orderBy(
+        direction === "up"
+          ? desc(programItems.position)
+          : asc(programItems.position),
+      )
+      .limit(1);
+    if (!neighbor) return;
+
+    await tx
+      .update(programItems)
+      .set({ position: neighbor.position, updatedAt: new Date() })
+      .where(eq(programItems.id, current.id));
+    await tx
+      .update(programItems)
+      .set({ position: current.position, updatedAt: new Date() })
+      .where(eq(programItems.id, neighbor.id));
   });
 
   revalidateTag(programTag(eventId), "max");

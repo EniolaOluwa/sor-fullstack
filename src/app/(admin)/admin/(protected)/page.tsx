@@ -3,7 +3,7 @@ import { formatEventDate } from "@/lib/format";
 import { getActiveEvent } from "@/server/services/events";
 import { getLiveState } from "@/server/services/live";
 import { listPosts } from "@/server/services/posts";
-import { listProgramItems } from "@/server/services/program";
+import { listProgramItemsFresh } from "@/server/services/program";
 import { listSongs } from "@/server/services/songs";
 import styles from "./page.module.css";
 
@@ -29,7 +29,7 @@ export default async function AdminDashboardPage() {
   }
 
   const [items, songs, posts, live] = await Promise.all([
-    listProgramItems(event.id, { includeHidden: true }),
+    listProgramItemsFresh(event.id, { includeHidden: true }),
     listSongs(event.id, { includeHidden: true }),
     listPosts(event.id, { includeHidden: true }),
     getLiveState(event.id),
