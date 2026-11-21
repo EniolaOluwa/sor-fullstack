@@ -1,0 +1,81 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-standard),
+    border-color var(--dur-fast) var(--ease-standard),
+    color var(--dur-fast) var(--ease-standard),
+    opacity var(--dur-fast) var(--ease-standard);
+}
+
+.button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Sizes */
+
+.sm {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-sm);
+}
+
+.md {
+  padding: var(--space-2) var(--space-5);
+  font-size: var(--text-base);
+}
+
+.lg {
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--text-lg);
+}
+
+/* Variants */
+
+.primary {
+  background-color: var(--color-navy-800);
+  background-image: var(--gradient-navy);
+  color: var(--color-cream-50);
+}
+
+.primary:hover:not(:disabled) {
+  background-image: none;
+  background-color: var(--color-navy-700);
+}
+
+.secondary {
+  background-color: var(--color-surface);
+  border-color: var(--color-navy-800);
+  color: var(--color-navy-800);
+}
+
+.secondary:hover:not(:disabled) {
+  background-color: var(--color-cream-100);
+}
+
+.ghost {
+  background-color: transparent;
+  color: inherit;
+}
+
+.ghost:hover:not(:disabled) {
+  background-color: var(--color-accent-soft);
+}
+
+.danger {
+  background-color: var(--color-danger);
+  color: #ffffff;
+}
+
+.danger:hover:not(:disabled) {
+  background-color: #a01f24;
+}

@@ -30,3 +30,13 @@ export const db = drizzle(sql, { schema });
 
 /** Raw client — only for scripts (e.g. seed) that must close the pool. */
 export { sql };
+
+/**
+ * Opens the connection pool eagerly. Called from `src/instrumentation.ts` at
+ * server start so the first query never happens mid-prerender (postgres.js
+ * generates a SCRAM nonce with `crypto.randomBytes` on connect, which Cache
+ * Components flags as an unstable value).
+ */
+export async function warmDb() {
+  await sql`select 1`;
+}
