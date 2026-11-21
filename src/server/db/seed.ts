@@ -1,16 +1,8 @@
+import "./load-env";
 import { hash } from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { db, sql } from "./client";
 import { events, liveState, programItems, users } from "./schema";
-
-// Load .env / .env.local when run outside Next.js.
-for (const file of [".env", ".env.local"]) {
-  try {
-    process.loadEnvFile(file);
-  } catch {
-    // File missing — ignore.
-  }
-}
 
 const EVENT_SLUG = "sound-of-revival";
 
