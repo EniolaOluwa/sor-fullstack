@@ -100,6 +100,11 @@
     var(--color-navy-800),
     var(--color-navy-700)
   );
+  --gradient-display-glow: radial-gradient(
+    120% 80% at 50% 0%,
+    rgb(246 217 160 / 0.16) 0%,
+    rgb(246 217 160 / 0) 55%
+  );
 
   /* Motion */
   --dur-fast: 150ms;

@@ -48,6 +48,14 @@ export default async function AdminLayout({
           <Link href="/admin/songs" className={styles.navLink}>
             Songs
           </Link>
+          <a
+            href="/display"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.navLink}
+          >
+            Open display ↗
+          </a>
         </nav>
 
         <div className={styles.footer}>

@@ -1,0 +1,288 @@
+/* Shared styles for the whole display surface (one cohesive slide deck). */
+
+.stage {
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5vh 5vw;
+  overflow: hidden;
+}
+
+.scene {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn var(--dur-slow) var(--ease-standard);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Shared slide pieces */
+
+.kicker {
+  font-size: var(--display-meta);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-gold-400);
+}
+
+/* Idle */
+
+.idle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  text-align: center;
+}
+
+.idleTitle {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.idleTitleSmall {
+  font-size: var(--display-heading);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-cream-50);
+}
+
+.idleTitleScript {
+  font-family: var(--font-script);
+  font-size: var(--display-title);
+  line-height: 1;
+  color: var(--color-gold-500);
+}
+
+.idleTagline {
+  font-size: var(--display-body);
+  color: var(--color-cream-50);
+}
+
+.idleMeta {
+  font-size: var(--display-meta);
+  color: var(--color-text-muted);
+}
+
+/* Program */
+
+.program {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  text-align: center;
+  max-width: 90vw;
+}
+
+.programTitle {
+  font-family: var(--font-display);
+  font-size: var(--display-title);
+  line-height: 1.1;
+  color: var(--color-cream-50);
+  text-wrap: balance;
+}
+
+.programDetails {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.programDetails li {
+  position: relative;
+  padding-left: 1.5em;
+  font-size: var(--display-body);
+  color: var(--color-gold-400);
+}
+
+.programDetails li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: var(--color-gold-500);
+}
+
+.programNext {
+  font-size: var(--display-meta);
+  color: var(--color-text-muted);
+}
+
+.programList {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4) var(--space-12);
+  font-size: var(--display-meta);
+  color: var(--color-cream-50);
+  text-align: left;
+}
+
+.programList li {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.programListPosition {
+  font-family: var(--font-mono);
+  color: var(--color-gold-400);
+  min-width: 2em;
+  text-align: right;
+}
+
+/* Song */
+
+.song {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  text-align: center;
+}
+
+.songTitle {
+  font-family: var(--font-display);
+  font-size: var(--display-title);
+  line-height: 1.1;
+  color: var(--color-cream-50);
+  text-wrap: balance;
+}
+
+.songAuthor {
+  font-size: var(--display-meta);
+  color: var(--color-text-muted);
+}
+
+.qrFrame {
+  padding: var(--space-5);
+  background: #ffffff;
+  border: 3px solid var(--color-gold-500);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-glow-gold);
+}
+
+.qrImage {
+  display: block;
+  height: clamp(220px, 34vh, 480px);
+  width: auto;
+}
+
+.qrCaption {
+  font-size: var(--display-meta);
+  color: var(--color-gold-400);
+}
+
+/* QR grid */
+
+.qrGridPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  width: 100%;
+}
+
+.qrGridTitle {
+  font-family: var(--font-display);
+  font-size: var(--display-heading);
+  color: var(--color-cream-50);
+}
+
+.qrGrid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(clamp(140px, 20vh, 240px), 1fr));
+  gap: var(--space-6);
+  width: 100%;
+  max-height: 72vh;
+}
+
+.qrGridCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.qrGridFrame {
+  padding: var(--space-3);
+  background: #ffffff;
+  border: 2px solid var(--color-gold-500);
+  border-radius: var(--radius-md);
+}
+
+.qrGridImage {
+  display: block;
+  width: clamp(110px, 15vh, 190px);
+  height: auto;
+}
+
+.qrGridSongTitle {
+  font-size: var(--display-meta);
+  color: var(--color-cream-50);
+  text-align: center;
+}
+
+/* Post */
+
+.post {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  width: 100%;
+}
+
+.postImage {
+  max-height: 68vh;
+  width: auto;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lifted);
+}
+
+.postPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(80vw, 900px);
+  aspect-ratio: 16 / 9;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: var(--display-meta);
+  color: var(--color-text-muted);
+}
+
+.postCaption {
+  font-size: var(--display-meta);
+  color: var(--color-cream-50);
+  text-align: center;
+  max-width: 80vw;
+}
+
+.postBrand {
+  font-size: var(--display-meta);
+  color: var(--color-gold-400);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}

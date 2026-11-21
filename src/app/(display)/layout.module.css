@@ -1,0 +1,11 @@
+.screen {
+  min-height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  cursor: none;
+  user-select: none;
+  -webkit-user-select: none;
+  background-color: var(--color-navy-900);
+  background-image: var(--gradient-display-glow);
+  background-repeat: no-repeat;
+}
