@@ -4,12 +4,12 @@ import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import formStyles from "@/components/ui/form.module.css";
 import {
-  clearLiveStateAction,
   createProgramItemAction,
   moveProgramItemAction,
   setCurrentProgramItemAction,
   toggleProgramItemVisibilityAction,
 } from "@/features/program/actions";
+import { clearLiveStateAction } from "@/features/live/actions";
 import { getActiveEvent } from "@/server/services/events";
 import { getLiveState } from "@/server/services/live";
 import { listProgramItemsFresh } from "@/server/services/program";

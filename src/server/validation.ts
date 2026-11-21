@@ -35,10 +35,22 @@ export const programItemUpdateSchema = createUpdateSchema(programItems, {
 /* Songs */
 
 export const lyricSectionSchema = z.object({
-  type: z.enum(["verse", "chorus", "bridge", "tag"]),
+  type: z.enum([
+    "verse",
+    "chorus",
+    "bridge",
+    "tag",
+    "intro",
+    "outro",
+    "recitation",
+  ]),
   label: z.string().trim().max(40).optional(),
   lines: z.array(z.string().trim()).min(1, "A section needs at least one line"),
 });
+
+export const lyricsSchema = z
+  .array(lyricSectionSchema)
+  .min(1, "Add at least one lyric line");
 
 export const songInsertSchema = createInsertSchema(songs, { slug, title });
 export const songUpdateSchema = createUpdateSchema(songs, { slug, title });

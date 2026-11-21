@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { getActiveEvent } from "@/server/services/events";
 import { formatEventDate } from "@/lib/format";
 import styles from "./layout.module.css";
@@ -24,6 +25,14 @@ export default async function AudienceLayout({
           <span className={styles.wordmarkScript}>Revival</span>
         </p>
         {meta && <p className={styles.meta}>{meta}</p>}
+        <nav className={styles.nav} aria-label="Pages">
+          <Link href="/program" className={styles.navLink}>
+            Order of Service
+          </Link>
+          <Link href="/songs" className={styles.navLink}>
+            Songs
+          </Link>
+        </nav>
       </header>
       <main className={styles.main}>{children}</main>
     </div>

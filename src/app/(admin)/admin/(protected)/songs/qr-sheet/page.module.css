@@ -1,0 +1,97 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  color: var(--color-navy-800);
+}
+
+.hint {
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.backLink {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-link);
+}
+
+.grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-4);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.qr {
+  border-radius: var(--radius-sm);
+}
+
+.songTitle {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-navy-800);
+}
+
+.songMeta {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  word-break: break-all;
+}
+
+/* Print: clean black-on-white sheet, page breaks between rows of cards. */
+
+@media print {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .card {
+    break-inside: avoid;
+    border: 1px solid #000;
+    box-shadow: none;
+    background: #fff;
+  }
+
+  .songTitle {
+    color: #000;
+  }
+
+  .songMeta {
+    color: #000;
+  }
+}

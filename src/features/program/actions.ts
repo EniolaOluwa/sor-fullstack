@@ -114,16 +114,3 @@ export async function setCurrentProgramItemAction(formData: FormData) {
     message: null,
   });
 }
-
-export async function clearLiveStateAction() {
-  await requireAdmin();
-  const eventId = await activeEventId();
-
-  await setLiveState(eventId, {
-    mode: "idle",
-    programItemId: null,
-    songId: null,
-    postId: null,
-    message: null,
-  });
-}

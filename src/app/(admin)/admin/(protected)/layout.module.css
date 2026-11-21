@@ -111,3 +111,21 @@
     padding: var(--space-6) var(--space-5);
   }
 }
+
+/* Printing (e.g. the QR sheet) hides the admin chrome entirely. */
+
+@media print {
+  .shell {
+    display: block;
+    min-height: auto;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .main {
+    max-width: none;
+    padding: 0;
+  }
+}

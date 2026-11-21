@@ -16,6 +16,21 @@ export async function listSongs(
   cacheLife("hours");
   cacheTag("songs", songsTag(eventId));
 
+  return querySongs(eventId, options);
+}
+
+/** Uncached counterpart for admin screens — see `listProgramItemsFresh`. */
+export async function listSongsFresh(
+  eventId: string,
+  options: { includeHidden?: boolean } = {},
+): Promise<Song[]> {
+  return querySongs(eventId, options);
+}
+
+async function querySongs(
+  eventId: string,
+  options: { includeHidden?: boolean } = {},
+): Promise<Song[]> {
   const { includeHidden = false } = options;
 
   return db
@@ -34,10 +49,29 @@ export async function getSongBySlug(eventId: string, slug: string) {
   cacheLife("hours");
   cacheTag("songs", songsTag(eventId));
 
+  return querySongBySlug(eventId, slug);
+}
+
+/** Uncached counterpart for admin screens — see `listProgramItemsFresh`. */
+export async function getSongBySlugFresh(eventId: string, slug: string) {
+  return querySongBySlug(eventId, slug);
+}
+
+async function querySongBySlug(eventId: string, slug: string) {
   const [song] = await db
     .select()
     .from(songs)
     .where(and(eq(songs.eventId, eventId), eq(songs.slug, slug)))
+    .limit(1);
+
+  return song ?? null;
+}
+
+export async function getSongByIdFresh(eventId: string, id: string) {
+  const [song] = await db
+    .select()
+    .from(songs)
+    .where(and(eq(songs.id, id), eq(songs.eventId, eventId)))
     .limit(1);
 
   return song ?? null;

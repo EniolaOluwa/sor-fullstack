@@ -2,7 +2,8 @@ import "./load-env";
 import { hash } from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { db, sql } from "./client";
-import { events, liveState, programItems, users } from "./schema";
+import { events, liveState, programItems, songs, users } from "./schema";
+import { SONGBOOK } from "./songbook";
 
 const EVENT_SLUG = "sound-of-revival";
 
@@ -100,6 +101,27 @@ async function main() {
 
   const email = process.env.ADMIN_EMAIL;
   const password = process.env.ADMIN_PASSWORD;
+
+  const existingSongs = await db
+    .select({ id: songs.id })
+    .from(songs)
+    .where(eq(songs.eventId, event.id))
+    .limit(1);
+
+  if (existingSongs.length === 0) {
+    await db.insert(songs).values(
+      SONGBOOK.map((song, position) => ({
+        eventId: event.id,
+        slug: song.slug,
+        title: song.title,
+        author: song.author ?? null,
+        songKey: song.songKey ?? null,
+        lyrics: song.sections,
+        position,
+      })),
+    );
+    console.log(`✔ Seeded ${SONGBOOK.length} songs from the songbook`);
+  }
 
   if (email && password) {
     const passwordHash = await hash(password, 12);

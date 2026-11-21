@@ -22,7 +22,7 @@ export const liveModeValues = ["idle", "program", "post", "song", "qr"] as const
 export const liveModeEnum = pgEnum("live_mode", liveModeValues);
 
 export type LyricSection = {
-  type: "verse" | "chorus" | "bridge" | "tag";
+  type: "verse" | "chorus" | "bridge" | "tag" | "intro" | "outro" | "recitation";
   label?: string;
   lines: string[];
 };
