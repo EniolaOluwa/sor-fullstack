@@ -6,11 +6,52 @@ import { events, liveState, programItems, users } from "./schema";
 
 const EVENT_SLUG = "sound-of-revival";
 
-const STARTER_PROGRAM = [
-  "Processional",
-  "Opening Prayer",
-  "Worship",
-  "Thanksgiving Ministration",
+const PROGRAM: Array<{ title: string; description?: string }> = [
+  { title: "Opening Prayer" },
+  { title: "Piano Prelude", description: "J.S. Bach — Prelude in C Major" },
+  { title: "Orchestra Prelude", description: "March from Scipio" },
+  { title: "Welcoming of Invited Guests" },
+  { title: "CM's Speech" },
+  {
+    title: "First Set Performances",
+    description: [
+      "Duration: 55 min 5 sec",
+      "Opening Song — He Has Done Marvellous Things",
+      "Praise Him",
+      "Psalm 150",
+      "Goodness of the Lord",
+      "First Service Choir",
+    ].join("\n"),
+  },
+  { title: "Intersection" },
+  { title: "Testimonies and Praise" },
+  {
+    title: "Second Set Performances",
+    description: [
+      "Song of the Redeemed and Drama Presentation",
+      "Jerusalem",
+      "Statement of Faith",
+      "Children Choir",
+    ].join("\n"),
+  },
+  { title: "Intersection" },
+  {
+    title: "Orchestra Performance",
+    description: ["Eti to bi", "Seasons of the King"].join("\n"),
+  },
+  {
+    title: "Third Set Performances",
+    description: [
+      "Igbo Song",
+      "Hausa Song",
+      "Yoruba Song",
+      "Revival in the Land",
+      "Days of Elijah",
+    ].join("\n"),
+  },
+  { title: "Prayers", description: "Led by Pastor Tolu" },
+  { title: "Exhortation" },
+  { title: "Sing" },
 ];
 
 async function main() {
@@ -47,13 +88,14 @@ async function main() {
 
   if (existingItems.length === 0) {
     await db.insert(programItems).values(
-      STARTER_PROGRAM.map((title, position) => ({
+      PROGRAM.map((item, position) => ({
         eventId: event.id,
-        title,
+        title: item.title,
+        description: item.description ?? null,
         position,
       })),
     );
-    console.log(`✔ Seeded ${STARTER_PROGRAM.length} starter program items`);
+    console.log(`✔ Seeded ${PROGRAM.length} program items`);
   }
 
   const email = process.env.ADMIN_EMAIL;

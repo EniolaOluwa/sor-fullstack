@@ -1,0 +1,105 @@
+.item {
+  display: flex;
+  gap: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  box-shadow: var(--shadow-card);
+  transition:
+    border-color var(--dur-base) var(--ease-standard),
+    box-shadow var(--dur-base) var(--ease-standard),
+    opacity var(--dur-base) var(--ease-standard);
+}
+
+.number {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  min-width: 1.5rem;
+  padding-top: 3px;
+}
+
+.body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--color-navy-800);
+}
+
+.detail {
+  font-size: var(--text-sm);
+  font-style: italic;
+  color: var(--color-text-muted);
+}
+
+.details {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+
+.details li {
+  position: relative;
+  padding-left: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.details li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-gold-500);
+  opacity: 0.7;
+}
+
+/* States */
+
+.current {
+  border-color: var(--color-gold-500);
+  box-shadow: var(--shadow-glow-gold);
+  background: linear-gradient(180deg, var(--color-surface), var(--color-cream-50));
+}
+
+.current .number {
+  color: var(--color-gold-600);
+}
+
+.current .title {
+  color: var(--color-navy-900);
+}
+
+.done {
+  opacity: 0.6;
+}
+
+.doneMark {
+  font-weight: 700;
+  color: var(--color-success);
+}
+
+.upcoming {
+  /* default appearance */
+}

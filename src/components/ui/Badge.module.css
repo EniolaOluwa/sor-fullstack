@@ -1,0 +1,38 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.neutral {
+  background: var(--color-cream-100);
+  color: var(--color-text);
+}
+
+.gold {
+  background: var(--color-accent-soft);
+  color: var(--color-gold-600);
+  border: 1px solid var(--color-gold-500);
+}
+
+.burgundy {
+  background: rgb(123 30 59 / 0.1);
+  color: var(--color-burgundy-700);
+}
+
+.red {
+  background: rgb(193 39 45 / 0.12);
+  color: var(--color-danger);
+}
+
+.success {
+  background: rgb(46 125 79 / 0.12);
+  color: var(--color-success);
+}
