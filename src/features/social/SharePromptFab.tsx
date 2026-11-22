@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
 import styles from "./SharePromptFab.module.css";
 
@@ -11,10 +11,41 @@ const HASHTAGS = [
   "#SoundOfRevivalConcert",
 ];
 
+const SEEN_KEY = "sor:sharePromptSeen";
+const listeners = new Set<() => void>();
+
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+function getSnapshot() {
+  try {
+    return localStorage.getItem(SEEN_KEY) !== "1";
+  } catch {
+    return true;
+  }
+}
+
+function getServerSnapshot() {
+  return true;
+}
+
+function markSeen() {
+  try {
+    localStorage.setItem(SEEN_KEY, "1");
+  } catch {
+    // Storage unavailable — the badge simply reappears on the next visit.
+  }
+  listeners.forEach((listener) => listener());
+}
+
 /**
  * Floating prompt shown across the audience surface. Tapping the info button
  * opens a sheet inviting guests to post their photos and gratitude on
- * Instagram with the event hashtags.
+ * Instagram with the event hashtags. An unread badge is dismissed once opened.
  *
  * The button is keyed on the pathname so the gold "radiate" animation replays
  * on each page visit (the audience layout itself persists across navigations).
@@ -23,6 +54,7 @@ export default function SharePromptFab() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const unread = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   useEffect(() => {
     if (!open) return;
@@ -41,6 +73,11 @@ export default function SharePromptFab() {
     };
   }, [open]);
 
+  function openPrompt() {
+    markSeen();
+    setOpen(true);
+  }
+
   async function copyHashtags() {
     try {
       await navigator.clipboard.writeText(HASHTAGS.join(" "));
@@ -57,8 +94,12 @@ export default function SharePromptFab() {
         key={pathname}
         type="button"
         className={`${styles.fab} ${styles.pulse}`}
-        onClick={() => setOpen(true)}
-        aria-label="How to share your experience on Instagram"
+        onClick={openPrompt}
+        aria-label={
+          unread
+            ? "How to share your experience on Instagram (1 unread)"
+            : "How to share your experience on Instagram"
+        }
       >
         <svg
           viewBox="0 0 24 24"
@@ -86,6 +127,11 @@ export default function SharePromptFab() {
           />
           <circle cx="12" cy="7.5" r="1.3" fill="currentColor" />
         </svg>
+        {unread && (
+          <span className={styles.badge} aria-hidden="true">
+            1
+          </span>
+        )}
       </button>
 
       {open && (
