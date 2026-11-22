@@ -1,15 +1,14 @@
 import "server-only";
-import { saveBuffer } from "./media";
 
 /**
- * Optional Instagram oEmbed auto-fill. Without IG_OEMBED_TOKEN this returns
- * null and the admin uploads the projection image manually — which is the
- * primary flow.
+ * Optional Instagram oEmbed lookup used to embed the post's image in a
+ * generated graphic. Without IG_OEMBED_TOKEN this returns null and the graphic
+ * falls back to a branded placeholder — Instagram scraping is not allowed.
  */
 
 type ResolvedPost = {
-  caption: string | null;
-  imagePath: string | null;
+  authorName: string | null;
+  imageDataUrl: string | null;
 };
 
 export async function resolveInstagramPost(
@@ -31,20 +30,22 @@ export async function resolveInstagramPost(
       thumbnail_url?: string;
     };
 
-    let imagePath: string | null = null;
+    let imageDataUrl: string | null = null;
     if (data.thumbnail_url) {
       const imageResponse = await fetch(data.thumbnail_url, {
         cache: "no-store",
       });
       if (imageResponse.ok) {
+        const contentType =
+          imageResponse.headers.get("content-type") ?? "image/jpeg";
         const buffer = Buffer.from(await imageResponse.arrayBuffer());
-        imagePath = await saveBuffer(buffer, "image/jpeg");
+        imageDataUrl = `data:${contentType};base64,${buffer.toString("base64")}`;
       }
     }
 
-    return { caption: data.author_name ?? null, imagePath };
+    return { authorName: data.author_name ?? null, imageDataUrl };
   } catch {
-    // Auto-fill is best-effort; the manual upload path always works.
+    // Auto-fill is best-effort; the branded placeholder always works.
     return null;
   }
 }

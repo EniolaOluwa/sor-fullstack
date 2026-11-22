@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { formatEventDate } from "@/lib/format";
 import { getActiveEvent } from "@/server/services/events";
 import { getLiveState } from "@/server/services/live";
-import { listPosts } from "@/server/services/posts";
 import { listProgramItemsFresh } from "@/server/services/program";
 import { listSongs } from "@/server/services/songs";
 import styles from "./page.module.css";
@@ -28,10 +27,9 @@ export default async function AdminDashboardPage() {
     );
   }
 
-  const [items, songs, posts, live] = await Promise.all([
+  const [items, songs, live] = await Promise.all([
     listProgramItemsFresh(event.id, { includeHidden: true }),
     listSongs(event.id, { includeHidden: true }),
-    listPosts(event.id, { includeHidden: true }),
     getLiveState(event.id),
   ]);
 
@@ -52,8 +50,7 @@ export default async function AdminDashboardPage() {
             {event.venue ? ` · ${event.venue}` : null}
           </p>
           <p className={styles.counts}>
-            {items.length} program items · {songs.length} songs · {posts.length}{" "}
-            posts
+            {items.length} program items · {songs.length} songs
           </p>
         </section>
 
@@ -70,7 +67,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       <p className={styles.note}>
-        Program, song, and post management screens land here next.
+        Program, song, and social graphic tools are available from the sidebar.
       </p>
     </div>
   );

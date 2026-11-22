@@ -111,7 +111,6 @@ export async function setCurrentSongAction(formData: FormData) {
     mode: "song",
     songId: id,
     programItemId: null,
-    postId: null,
     message: null,
   });
 }

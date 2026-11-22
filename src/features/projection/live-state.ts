@@ -11,7 +11,6 @@ export type LiveStateData = {
   mode: LiveMode;
   programItemId: string | null;
   songId: string | null;
-  postId: string | null;
   message: string | null;
   updatedAt: string;
 };
@@ -22,7 +21,6 @@ export function toLiveStateData(
     mode: LiveMode;
     programItemId: string | null;
     songId: string | null;
-    postId: string | null;
     message: string | null;
     updatedAt: Date;
   } | null,

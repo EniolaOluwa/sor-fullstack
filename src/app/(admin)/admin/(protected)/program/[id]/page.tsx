@@ -6,10 +6,16 @@ import ConfirmForm from "@/components/ui/ConfirmForm";
 import formStyles from "@/components/ui/form.module.css";
 import {
   deleteProgramItemAction,
+  setProgramItemSongsAction,
   updateProgramItemAction,
 } from "@/features/program/actions";
 import { getActiveEvent } from "@/server/services/events";
-import { getProgramItemFresh } from "@/server/services/program";
+import {
+  getProgramItemFresh,
+  listProgramItemSongsFresh,
+} from "@/server/services/program";
+import { listSongsFresh } from "@/server/services/songs";
+import { setLyricsPath } from "@/lib/urls";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -27,6 +33,12 @@ export default async function EditProgramItemPage({
   const item = await getProgramItemFresh(event.id, id);
   if (!item) notFound();
 
+  const [songs, assigned] = await Promise.all([
+    listSongsFresh(event.id, { includeHidden: true }),
+    listProgramItemSongsFresh(event.id, id),
+  ]);
+  const assignedIds = new Set(assigned.map((song) => song.id));
+
   return (
     <div className={styles.page}>
       <Link href="/admin/program" className={styles.backLink}>
@@ -34,6 +46,16 @@ export default async function EditProgramItemPage({
       </Link>
 
       <h1 className={styles.title}>Edit item</h1>
+
+      {assigned.length > 0 && (
+        <Link
+          href={setLyricsPath(item.id)}
+          className={styles.backLink}
+          target="_blank"
+        >
+          View lyrics page ↗
+        </Link>
+      )}
 
       <form action={updateProgramItemAction} className={styles.form}>
         <input type="hidden" name="id" value={item.id} />
@@ -74,6 +96,48 @@ export default async function EditProgramItemPage({
           <Button type="submit">Save changes</Button>
         </div>
       </form>
+
+      <section className={styles.songsCard}>
+        <div>
+          <h2 className={styles.sectionTitle}>Songs in this set</h2>
+          <p className={styles.sectionHint}>
+            Pick the songs sung during this item. They appear together on a
+            public lyrics page (with its own QR code) linked from the order of
+            service.
+          </p>
+        </div>
+
+        {songs.length === 0 ? (
+          <p className={styles.sectionHint}>
+            No songs in the songbook yet — add songs first.
+          </p>
+        ) : (
+          <form action={setProgramItemSongsAction} className={styles.songsForm}>
+            <input type="hidden" name="id" value={item.id} />
+            <ul className={styles.songList}>
+              {songs.map((song) => (
+                <li key={song.id}>
+                  <label className={styles.songOption}>
+                    <input
+                      type="checkbox"
+                      name="songIds"
+                      value={song.id}
+                      defaultChecked={assignedIds.has(song.id)}
+                    />
+                    <span className={styles.songTitle}>{song.title}</span>
+                    {!song.isVisible && (
+                      <span className={styles.songHidden}>Hidden</span>
+                    )}
+                  </label>
+                </li>
+              ))}
+            </ul>
+            <div>
+              <Button type="submit">Save songs</Button>
+            </div>
+          </form>
+        )}
+      </section>
 
       <div className={styles.dangerZone}>
         <p className={styles.dangerLabel}>Danger zone</p>

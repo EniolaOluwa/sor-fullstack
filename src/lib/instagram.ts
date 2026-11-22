@@ -26,7 +26,3 @@ export function extractInstagramShortcode(input: string): string | null {
   const match = SHORTCODE_PATTERN.exec(url.pathname);
   return match ? match[1] : null;
 }
-
-export function instagramEmbedUrl(shortcode: string): string {
-  return `https://www.instagram.com/p/${shortcode}/embed/captioned/`;
-}

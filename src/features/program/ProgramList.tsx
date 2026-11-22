@@ -11,15 +11,18 @@ import styles from "./ProgramList.module.css";
 type ProgramListProps = {
   eventId: string;
   items: ProgramItemData[];
+  lyricsItemIds: string[];
   initialLiveState: LiveStateData | null;
 };
 
 export default function ProgramList({
   eventId,
   items,
+  lyricsItemIds,
   initialLiveState,
 }: ProgramListProps) {
   const live = useLiveState(eventId, initialLiveState);
+  const lyricsIds = new Set(lyricsItemIds);
 
   const currentIndex =
     live?.mode === "program" && live.programItemId
@@ -41,6 +44,7 @@ export default function ProgramList({
           index={index + 1}
           item={item}
           state={stateFor(index)}
+          hasLyrics={lyricsIds.has(item.id)}
         />
       ))}
     </ol>

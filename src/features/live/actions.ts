@@ -15,7 +15,6 @@ export async function clearLiveStateAction() {
     mode: "idle",
     programItemId: null,
     songId: null,
-    postId: null,
     message: null,
   });
 }

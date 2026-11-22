@@ -52,3 +52,13 @@
 .tag .line {
   font-style: italic;
 }
+
+@media (max-width: 380px) {
+  .lyrics {
+    gap: var(--space-6);
+  }
+
+  .line {
+    font-size: var(--text-base);
+  }
+}

@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
+import { Suspense } from "react";
 import Link from "next/link";
+import SharePromptFab from "@/features/social/SharePromptFab";
 import { getActiveEvent } from "@/server/services/events";
 import { formatEventDate } from "@/lib/format";
 import styles from "./layout.module.css";
@@ -32,12 +34,12 @@ export default async function AudienceLayout({
           <Link href="/songs" className={styles.navLink}>
             Songs
           </Link>
-          <Link href="/posts" className={styles.navLink}>
-            Posts
-          </Link>
         </nav>
       </header>
       <main className={styles.main}>{children}</main>
+      <Suspense fallback={null}>
+        <SharePromptFab />
+      </Suspense>
     </div>
   );
 }

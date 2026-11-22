@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
-import { events, liveState, programItems, socialPosts, songs } from "./db/schema";
+import { events, liveState, programItems, songs } from "./db/schema";
 
 /**
  * Zod schemas derived from the Drizzle schema (single source of truth).
@@ -54,15 +54,6 @@ export const lyricsSchema = z
 
 export const songInsertSchema = createInsertSchema(songs, { slug, title });
 export const songUpdateSchema = createUpdateSchema(songs, { slug, title });
-
-/* Social posts */
-
-export const postInsertSchema = createInsertSchema(socialPosts, {
-  instagramUrl: z.string().trim().url("Enter a valid URL"),
-});
-export const postUpdateSchema = createUpdateSchema(socialPosts, {
-  instagramUrl: z.string().trim().url("Enter a valid URL"),
-});
 
 /* Live state */
 

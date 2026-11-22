@@ -12,7 +12,6 @@ export type LiveStatePatch = {
   mode?: LiveMode;
   programItemId?: string | null;
   songId?: string | null;
-  postId?: string | null;
   message?: string | null;
 };
 

@@ -11,6 +11,7 @@ import {
   deleteProgramItem,
   moveProgramItem,
   programTag,
+  setProgramItemSongs,
   updateProgramItem,
 } from "@/server/services/program";
 import {
@@ -101,6 +102,21 @@ export async function toggleProgramItemVisibilityAction(formData: FormData) {
   updateTag(programTag(eventId));
 }
 
+export async function setProgramItemSongsAction(formData: FormData) {
+  await requireAdmin();
+  const eventId = await activeEventId();
+  const id = idSchema.parse(formData.get("id"));
+
+  const songIds = formData
+    .getAll("songIds")
+    .map((value) => idSchema.safeParse(value))
+    .filter((result) => result.success)
+    .map((result) => result.data);
+
+  await setProgramItemSongs(eventId, id, songIds);
+  updateTag(programTag(eventId));
+}
+
 export async function setCurrentProgramItemAction(formData: FormData) {
   await requireAdmin();
   const eventId = await activeEventId();
@@ -110,7 +126,6 @@ export async function setCurrentProgramItemAction(formData: FormData) {
     mode: "program",
     programItemId: id,
     songId: null,
-    postId: null,
     message: null,
   });
 }

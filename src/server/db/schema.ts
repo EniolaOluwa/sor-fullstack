@@ -6,6 +6,7 @@ import {
   jsonb,
   pgEnum,
   pgTable,
+  primaryKey,
   text,
   timestamp,
   uniqueIndex,
@@ -18,7 +19,7 @@ import {
  * are derived from this file — never hand-write duplicates.
  */
 
-export const liveModeValues = ["idle", "program", "post", "song", "qr"] as const;
+export const liveModeValues = ["idle", "program", "song", "qr"] as const;
 export const liveModeEnum = pgEnum("live_mode", liveModeValues);
 
 export type LyricSection = {
@@ -93,29 +94,21 @@ export const songs = pgTable(
   ],
 );
 
-export const socialPosts = pgTable(
-  "social_posts",
+/**
+ * Admin-curated membership of songs in a program item (e.g. a performance set).
+ * Order is taken from `songs.position`, so no position column is needed here.
+ */
+export const programItemSongs = pgTable(
+  "program_item_songs",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
-    eventId: uuid("event_id")
+    programItemId: uuid("program_item_id")
       .notNull()
-      .references(() => events.id, { onDelete: "cascade" }),
-    instagramUrl: text("instagram_url").notNull(),
-    shortcode: text("shortcode"),
-    caption: text("caption"),
-    imageUrl: text("image_url"),
-    position: integer("position").notNull().default(0),
-    isVisible: boolean("is_visible").notNull().default(true),
-    createdAt: timestamp("created_at", { withTimezone: true })
+      .references(() => programItems.id, { onDelete: "cascade" }),
+    songId: uuid("song_id")
       .notNull()
-      .defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
+      .references(() => songs.id, { onDelete: "cascade" }),
   },
-  (t) => [
-    index("social_posts_event_position_idx").on(t.eventId, t.position),
-  ],
+  (t) => [primaryKey({ columns: [t.programItemId, t.songId] })],
 );
 
 export const liveState = pgTable("live_state", {
@@ -127,9 +120,6 @@ export const liveState = pgTable("live_state", {
     onDelete: "set null",
   }),
   songId: uuid("song_id").references(() => songs.id, { onDelete: "set null" }),
-  postId: uuid("post_id").references(() => socialPosts.id, {
-    onDelete: "set null",
-  }),
   message: text("message"),
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
@@ -150,27 +140,35 @@ export const users = pgTable("users", {
 export const eventsRelations = relations(events, ({ many, one }) => ({
   programItems: many(programItems),
   songs: many(songs),
-  socialPosts: many(socialPosts),
   liveState: one(liveState),
 }));
 
-export const programItemsRelations = relations(programItems, ({ one }) => ({
+export const programItemsRelations = relations(programItems, ({ one, many }) => ({
   event: one(events, {
     fields: [programItems.eventId],
     references: [events.id],
   }),
+  songs: many(programItemSongs),
 }));
 
-export const songsRelations = relations(songs, ({ one }) => ({
+export const songsRelations = relations(songs, ({ one, many }) => ({
   event: one(events, { fields: [songs.eventId], references: [events.id] }),
+  programItems: many(programItemSongs),
 }));
 
-export const socialPostsRelations = relations(socialPosts, ({ one }) => ({
-  event: one(events, {
-    fields: [socialPosts.eventId],
-    references: [events.id],
+export const programItemSongsRelations = relations(
+  programItemSongs,
+  ({ one }) => ({
+    programItem: one(programItems, {
+      fields: [programItemSongs.programItemId],
+      references: [programItems.id],
+    }),
+    song: one(songs, {
+      fields: [programItemSongs.songId],
+      references: [songs.id],
+    }),
   }),
-}));
+);
 
 export const liveStateRelations = relations(liveState, ({ one }) => ({
   event: one(events, {
@@ -185,10 +183,6 @@ export const liveStateRelations = relations(liveState, ({ one }) => ({
     fields: [liveState.songId],
     references: [songs.id],
   }),
-  post: one(socialPosts, {
-    fields: [liveState.postId],
-    references: [socialPosts.id],
-  }),
 }));
 
 export type Event = typeof events.$inferSelect;
@@ -197,8 +191,8 @@ export type ProgramItem = typeof programItems.$inferSelect;
 export type NewProgramItem = typeof programItems.$inferInsert;
 export type Song = typeof songs.$inferSelect;
 export type NewSong = typeof songs.$inferInsert;
-export type SocialPost = typeof socialPosts.$inferSelect;
-export type NewSocialPost = typeof socialPosts.$inferInsert;
+export type ProgramItemSong = typeof programItemSongs.$inferSelect;
+export type NewProgramItemSong = typeof programItemSongs.$inferInsert;
 export type LiveState = typeof liveState.$inferSelect;
 export type NewLiveState = typeof liveState.$inferInsert;
 export type LiveMode = (typeof liveModeValues)[number];

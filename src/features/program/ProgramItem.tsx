@@ -1,4 +1,6 @@
+import Link from "next/link";
 import Badge from "@/components/ui/Badge";
+import { setLyricsPath } from "@/lib/urls";
 import styles from "./ProgramItem.module.css";
 
 export type ProgramItemData = {
@@ -14,9 +16,15 @@ type ProgramItemProps = {
   index: number;
   item: ProgramItemData;
   state: ProgramItemState;
+  hasLyrics?: boolean;
 };
 
-export default function ProgramItem({ index, item, state }: ProgramItemProps) {
+export default function ProgramItem({
+  index,
+  item,
+  state,
+  hasLyrics = false,
+}: ProgramItemProps) {
   const lines =
     item.description
       ?.split("\n")
@@ -48,6 +56,12 @@ export default function ProgramItem({ index, item, state }: ProgramItemProps) {
               <li key={`${item.id}-${lineIndex}`}>{line}</li>
             ))}
           </ul>
+        )}
+
+        {hasLyrics && (
+          <Link href={setLyricsPath(item.id)} className={styles.lyricsLink}>
+            Lyrics ↗
+          </Link>
         )}
       </div>
     </li>

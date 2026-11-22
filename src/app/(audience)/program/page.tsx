@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getActiveEvent } from "@/server/services/events";
-import { listProgramItems } from "@/server/services/program";
+import {
+  listProgramItemIdsWithSongs,
+  listProgramItems,
+} from "@/server/services/program";
 import { getLiveState } from "@/server/services/live";
 import { toLiveStateData } from "@/features/projection/live-state";
 import ProgramList from "@/features/program/ProgramList";
@@ -20,7 +23,10 @@ export default async function ProgramPage() {
     );
   }
 
-  const items = await listProgramItems(event.id);
+  const [items, lyricsItemIds] = await Promise.all([
+    listProgramItems(event.id),
+    listProgramItemIdsWithSongs(event.id),
+  ]);
 
   return (
     <div className={styles.page}>
@@ -43,11 +49,16 @@ export default async function ProgramPage() {
             <ProgramList
               eventId={event.id}
               items={items}
+              lyricsItemIds={lyricsItemIds}
               initialLiveState={null}
             />
           }
         >
-          <LiveProgram eventId={event.id} items={items} />
+          <LiveProgram
+            eventId={event.id}
+            items={items}
+            lyricsItemIds={lyricsItemIds}
+          />
         </Suspense>
       )}
     </div>
@@ -57,9 +68,11 @@ export default async function ProgramPage() {
 async function LiveProgram({
   eventId,
   items,
+  lyricsItemIds,
 }: {
   eventId: string;
   items: Awaited<ReturnType<typeof listProgramItems>>;
+  lyricsItemIds: string[];
 }) {
   const state = await getLiveState(eventId);
 
@@ -67,6 +80,7 @@ async function LiveProgram({
     <ProgramList
       eventId={eventId}
       items={items}
+      lyricsItemIds={lyricsItemIds}
       initialLiveState={toLiveStateData(state)}
     />
   );

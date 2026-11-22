@@ -40,25 +40,21 @@ export default async function AdminLayout({
 
         <nav className={styles.nav} aria-label="Admin">
           <Link href="/admin" className={styles.navLink}>
-            Dashboard
+            <span className={styles.labelFull}>Dashboard</span>
+            <span className={styles.labelShort}>Home</span>
           </Link>
           <Link href="/admin/program" className={styles.navLink}>
-            Order of service
+            <span className={styles.labelFull}>Order of service</span>
+            <span className={styles.labelShort}>Program</span>
           </Link>
           <Link href="/admin/songs" className={styles.navLink}>
-            Songs
+            <span className={styles.labelFull}>Songs</span>
+            <span className={styles.labelShort}>Songs</span>
           </Link>
-          <Link href="/admin/posts" className={styles.navLink}>
-            Posts
+          <Link href="/admin/social" className={styles.navLink}>
+            <span className={styles.labelFull}>Social graphics</span>
+            <span className={styles.labelShort}>Social</span>
           </Link>
-          <a
-            href="/display"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.navLink}
-          >
-            Open display ↗
-          </a>
         </nav>
 
         <div className={styles.footer}>

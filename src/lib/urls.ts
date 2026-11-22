@@ -15,3 +15,15 @@ export function songUrl(slug: string): string {
 export function songQrPath(slug: string): string {
   return `/api/qr/${slug}`;
 }
+
+export function setLyricsPath(id: string): string {
+  return `/program/${id}/lyrics`;
+}
+
+export function setLyricsUrl(id: string): string {
+  return `${publicAppUrl()}${setLyricsPath(id)}`;
+}
+
+export function setQrPath(id: string): string {
+  return `/api/qr/set/${id}`;
+}
