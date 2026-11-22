@@ -62,7 +62,7 @@ async function main() {
       slug: EVENT_SLUG,
       title: "Sound of Revival",
       tagline: "Concert / Thanksgiving Service",
-      venue: "Auditorium D, Baze University",
+      venue: "Baze University Multipurpose Hall",
       startsAt: new Date("2026-11-22T15:00:00+01:00"),
       coverImageUrl: "/sound-of-revival.jpg",
     })
@@ -71,7 +71,7 @@ async function main() {
       set: {
         title: "Sound of Revival",
         tagline: "Concert / Thanksgiving Service",
-        venue: "Auditorium D, Baze University",
+        venue: "Baze University Multipurpose Hall",
         startsAt: new Date("2026-11-22T15:00:00+01:00"),
         coverImageUrl: "/sound-of-revival.jpg",
         updatedAt: new Date(),
