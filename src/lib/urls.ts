@@ -16,6 +16,14 @@ export function songQrPath(slug: string): string {
   return `/api/qr/${slug}`;
 }
 
+export function siteUrl(): string {
+  return publicAppUrl();
+}
+
+export function siteQrPath(): string {
+  return "/api/qr/site";
+}
+
 export function setLyricsPath(id: string): string {
   return `/program/${id}/lyrics`;
 }
