@@ -137,6 +137,31 @@ export const users = pgTable("users", {
     .defaultNow(),
 });
 
+/**
+ * Lightweight first-party analytics. One row per audience page view; unique
+ * visitors are counted by `visitorId` (a random id kept in localStorage).
+ * No IP addresses are stored.
+ */
+export const visits = pgTable(
+  "visits",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    visitorId: uuid("visitor_id").notNull(),
+    path: text("path").notNull(),
+    deviceType: text("device_type").notNull(),
+    os: text("os"),
+    browser: text("browser"),
+    userAgent: text("user_agent"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    index("visits_created_at_idx").on(t.createdAt),
+    index("visits_visitor_idx").on(t.visitorId),
+  ],
+);
+
 export const eventsRelations = relations(events, ({ many, one }) => ({
   programItems: many(programItems),
   songs: many(songs),
@@ -198,3 +223,5 @@ export type NewLiveState = typeof liveState.$inferInsert;
 export type LiveMode = (typeof liveModeValues)[number];
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+export type Visit = typeof visits.$inferSelect;
+export type NewVisit = typeof visits.$inferInsert;

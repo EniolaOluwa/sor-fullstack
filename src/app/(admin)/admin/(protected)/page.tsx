@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { formatEventDate } from "@/lib/format";
+import {
+  getVisitStats,
+  type Breakdown,
+} from "@/server/services/analytics";
 import { getActiveEvent } from "@/server/services/events";
 import { getLiveState } from "@/server/services/live";
 import { listProgramItemsFresh } from "@/server/services/program";
@@ -60,11 +65,17 @@ export default async function AdminDashboardPage() {
             {liveLabel(live?.mode ?? "idle", currentItem?.title)}
           </p>
           <p className={styles.meta}>
-            The audience program page and the projector follow this
-            automatically.
+            The audience program page follows this automatically.
           </p>
         </section>
       </div>
+
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Analytics</h2>
+        <Suspense fallback={<AnalyticsFallback />}>
+          <AnalyticsSection />
+        </Suspense>
+      </section>
 
       <p className={styles.note}>
         Program, song, and social graphic tools are available from the sidebar.
@@ -73,15 +84,81 @@ export default async function AdminDashboardPage() {
   );
 }
 
+async function AnalyticsSection() {
+  const stats = await getVisitStats();
+
+  return (
+    <>
+      <div className={styles.grid}>
+        <div className={styles.card}>
+          <p className={styles.cardLabel}>Page views</p>
+          <p className={styles.statValue}>{stats.pageViews}</p>
+          <p className={styles.meta}>{stats.pageViews7d} in the last 7 days</p>
+        </div>
+        <div className={styles.card}>
+          <p className={styles.cardLabel}>Unique visitors</p>
+          <p className={styles.statValue}>{stats.visitors}</p>
+          <p className={styles.meta}>{stats.visitors7d} in the last 7 days</p>
+        </div>
+      </div>
+
+      <div className={styles.grid}>
+        <BreakdownCard title="Devices" rows={stats.byDeviceType} />
+        <BreakdownCard title="Operating systems" rows={stats.byOs} />
+        <BreakdownCard title="Browsers" rows={stats.byBrowser} />
+      </div>
+    </>
+  );
+}
+
+function AnalyticsFallback() {
+  return (
+    <div className={styles.grid}>
+      <div className={styles.card}>
+        <p className={styles.cardLabel}>Page views</p>
+        <p className={styles.statValue}>—</p>
+      </div>
+      <div className={styles.card}>
+        <p className={styles.cardLabel}>Unique visitors</p>
+        <p className={styles.statValue}>—</p>
+      </div>
+    </div>
+  );
+}
+
+function BreakdownCard({ title, rows }: { title: string; rows: Breakdown[] }) {
+  return (
+    <section className={styles.card}>
+      <p className={styles.cardLabel}>{title}</p>
+      {rows.length === 0 ? (
+        <p className={styles.meta}>No data yet.</p>
+      ) : (
+        <ul className={styles.breakdown}>
+          {rows.map((row) => (
+            <li key={row.label} className={styles.breakdownRow}>
+              <span className={styles.breakdownLabel}>{row.label}</span>
+              <span className={styles.breakdownCount}>
+                {row.pageViews}
+                <span className={styles.breakdownSub}>
+                  {" "}
+                  · {row.visitors} uniq
+                </span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
 function liveLabel(
-  mode: "idle" | "program" | "post" | "song" | "qr",
+  mode: "idle" | "program" | "song" | "qr",
   currentItemTitle?: string,
 ): string {
   switch (mode) {
     case "program":
       return currentItemTitle ? `Program — ${currentItemTitle}` : "Program";
-    case "post":
-      return "Social post";
     case "song":
       return "Song";
     case "qr":

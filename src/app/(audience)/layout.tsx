@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Suspense } from "react";
 import Link from "next/link";
+import VisitTracker from "@/features/analytics/VisitTracker";
 import SharePromptFab from "@/features/social/SharePromptFab";
 import { getActiveEvent } from "@/server/services/events";
 import { formatEventDate } from "@/lib/format";
@@ -38,6 +39,7 @@ export default async function AudienceLayout({
       </header>
       <main className={styles.main}>{children}</main>
       <Suspense fallback={null}>
+        <VisitTracker />
         <SharePromptFab />
       </Suspense>
     </div>
