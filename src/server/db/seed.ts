@@ -63,7 +63,7 @@ async function main() {
       title: "Sound of Revival",
       tagline: "Concert / Thanksgiving Service",
       venue: "Baze University Multipurpose Hall",
-      startsAt: new Date("2026-11-22T15:00:00+01:00"),
+      startsAt: new Date("2026-11-22T13:00:00+01:00"),
       coverImageUrl: "/sound-of-revival.jpg",
     })
     .onConflictDoUpdate({
@@ -72,7 +72,7 @@ async function main() {
         title: "Sound of Revival",
         tagline: "Concert / Thanksgiving Service",
         venue: "Baze University Multipurpose Hall",
-        startsAt: new Date("2026-11-22T15:00:00+01:00"),
+        startsAt: new Date("2026-11-22T13:00:00+01:00"),
         coverImageUrl: "/sound-of-revival.jpg",
         updatedAt: new Date(),
       },

@@ -31,7 +31,7 @@ const greatVibes = Great_Vibes({
 export const metadata: Metadata = {
   title: "Sound of Revival — Baze University Chapel",
   description:
-    "Concert / Thanksgiving Service. Sunday 22 November, 3PM prompt, Baze University Multipurpose Hall.",
+    "Concert / Thanksgiving Service. Sunday 22 November, 1PM prompt, Baze University Multipurpose Hall.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
