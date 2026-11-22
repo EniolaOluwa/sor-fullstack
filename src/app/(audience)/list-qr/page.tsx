@@ -1,12 +1,6 @@
 import type { Metadata } from "next";
 import QrList, { type QrListItem } from "@/features/qr/QrList";
-import {
-  setLyricsPath,
-  setLyricsUrl,
-  setQrPath,
-  siteQrPath,
-  siteUrl,
-} from "@/lib/urls";
+import { setLyricsUrl, setQrPath, siteQrPath, siteUrl } from "@/lib/urls";
 import { getActiveEvent } from "@/server/services/events";
 import {
   listProgramItemIdsWithSongs,
@@ -36,7 +30,6 @@ export default async function ListQrPage() {
       id: "site",
       title: "Sound of Revival — Home",
       url: siteUrl(),
-      href: "/",
       qrSrc: siteQrPath(),
     },
     ...items
@@ -45,7 +38,6 @@ export default async function ListQrPage() {
         id: item.id,
         title: item.title,
         url: setLyricsUrl(item.id),
-        href: setLyricsPath(item.id),
         qrSrc: setQrPath(item.id),
       })),
   ];
