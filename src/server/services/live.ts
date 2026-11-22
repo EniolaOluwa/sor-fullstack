@@ -1,12 +1,19 @@
 import "server-only";
 import { eq } from "drizzle-orm";
-import { db } from "../db/client";
+import { toLiveStateData } from "@/features/projection/live-state";
+import { db, sql } from "../db/client";
 import { liveState, type LiveState, type LiveMode } from "../db/schema";
 
 /**
- * Live projection state. Deliberately uncached: this is polled every ~2s by the
- * display, audience program page, and admin preview via /api/live/[eventId].
+ * Live projection state. Deliberately uncached: it is streamed to the audience
+ * program page (and admin previews) over Server-Sent Events, with a polling
+ * fallback at /api/live/[eventId].
+ *
+ * Every write is broadcast on the `live_state` Postgres channel so any server
+ * instance can push the change to its connected clients.
  */
+
+export const LIVE_CHANNEL = "live_state";
 
 export type LiveStatePatch = {
   mode?: LiveMode;
@@ -34,6 +41,12 @@ export async function setLiveState(eventId: string, patch: LiveStatePatch) {
       set: { ...patch, updatedAt: new Date() },
     })
     .returning();
+
+  if (state) {
+    await sql`select pg_notify(${LIVE_CHANNEL}, ${JSON.stringify(
+      toLiveStateData(state),
+    )})`;
+  }
 
   return state;
 }

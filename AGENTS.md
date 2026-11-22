@@ -74,8 +74,10 @@ Hard rules:
   sit behind `<Suspense>` boundaries or inside `'use cache: private'` helpers.
 - Mutations call `revalidateTag`/`updateTag` (never revalidate everything), and the
   admin UI uses `refresh()` where a router refresh is enough.
-- Live state is a single-row `live_state` table polled by `/api/live/[eventId]` every
-  ~2s; do not introduce SSE or websockets without discussing it first.
+- Live state is a single-row `live_state` table streamed to the audience program
+  page over SSE (`/api/live/[eventId]/stream`, fanned out via Postgres
+  `LISTEN/NOTIFY` on the `live_state` channel); `/api/live/[eventId]` remains the
+  polling fallback. Don't add WebSockets without discussing it first.
 
 ## Auth
 

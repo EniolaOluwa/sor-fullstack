@@ -4,25 +4,24 @@ import { useEffect, useState } from "react";
 import type { LiveStateData } from "./live-state";
 
 /**
- * Polls the live projection state. Shared by the audience program page,
- * the display surface, and admin previews. Pauses while the tab is hidden
- * and resumes immediately when it becomes visible again.
+ * Subscribes to the live projection state over Server-Sent Events. Shared by
+ * the audience program page and the songs list. Falls back to polling where
+ * EventSource is unavailable, and re-syncs whenever the tab becomes visible
+ * (mobile browsers may suspend the stream in the background).
  */
 
-const DEFAULT_INTERVAL_MS = 2000;
+const FALLBACK_INTERVAL_MS = 2000;
 
 export function useLiveState(
   eventId: string,
   initialState: LiveStateData | null,
-  options: { intervalMs?: number } = {},
 ) {
-  const { intervalMs = DEFAULT_INTERVAL_MS } = options;
   const [state, setState] = useState<LiveStateData | null>(initialState);
 
   useEffect(() => {
     let cancelled = false;
 
-    async function poll() {
+    async function refresh() {
       try {
         const response = await fetch(`/api/live/${eventId}`, {
           cache: "no-store",
@@ -34,27 +33,45 @@ export function useLiveState(
         };
         if (!cancelled) setState(data.state);
       } catch {
-        // Network hiccup — keep the last known state and retry next tick.
+        // Network hiccup — keep the last known state.
       }
     }
 
     function onVisibilityChange() {
-      if (document.visibilityState === "visible") void poll();
+      if (document.visibilityState === "visible") void refresh();
     }
 
-    const timer = setInterval(() => {
-      if (document.visibilityState === "visible") void poll();
-    }, intervalMs);
-
     document.addEventListener("visibilitychange", onVisibilityChange);
-    void poll();
+
+    let source: EventSource | null = null;
+    let timer: ReturnType<typeof setInterval> | null = null;
+
+    if (typeof EventSource !== "undefined") {
+      source = new EventSource(`/api/live/${eventId}/stream`);
+      source.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data) as {
+            state: LiveStateData | null;
+          };
+          if (!cancelled) setState(data.state);
+        } catch {
+          // ignore malformed events
+        }
+      };
+    } else {
+      timer = setInterval(() => {
+        if (document.visibilityState === "visible") void refresh();
+      }, FALLBACK_INTERVAL_MS);
+      void refresh();
+    }
 
     return () => {
       cancelled = true;
-      clearInterval(timer);
       document.removeEventListener("visibilitychange", onVisibilityChange);
+      source?.close();
+      if (timer) clearInterval(timer);
     };
-  }, [eventId, intervalMs]);
+  }, [eventId]);
 
   return state;
 }
